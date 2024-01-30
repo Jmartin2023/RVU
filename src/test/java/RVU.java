@@ -1,5 +1,10 @@
+package rpa;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,7 +12,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-
+import java.net.HttpURLConnection;
+import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -42,6 +49,7 @@ public class RVU {
 	boolean skipFlag =false, screen;
 	Set matchSet = new HashSet();
 	WebDriver driver;
+	String URL;
 String CPT2= ", 80307";
 	//JavascriptExecutor js;
 	SeleniumUtils sel;
@@ -97,6 +105,7 @@ String CPT2= ", 80307";
 	@Test(dataProvider= "getData",priority=1)
 	public  void pdfDownload(Hashtable<String,String> data) throws IOException, InterruptedException, ParseException {
 		rowNum++;
+		renameRowNum++;
 		status= data.get("Status");
 		
 
@@ -128,9 +137,15 @@ String CPT2= ", 80307";
 //         }catch(Exception e) {
 //        	 System.out.println("Exception occured");
 //         }
-//          
+//       
+        	try{   
          driver.findElement(By.xpath("//li[1]/a[text()='"+lastName+ ", "+ firstName+"']")).click();
-         
+        	}catch(Exception e) {
+        		logger.info("Patient not found");
+        		
+        		excel.setCellData(sheetName, "Status", rowNum, "Fail");
+        		throw new SkipException("Patient not found");
+        	}
       //   for(WebElement i :PatientList ) {
             	
        //     	System.out.println( i.getText());
@@ -143,8 +158,19 @@ String CPT2= ", 80307";
             //	logger.info("Clicked on Patient");
             	Thread.sleep(3000);
             	sel.pauseClick(driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")), 20);
-            	driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")).click();
-            	logger.info("Clicked on Facesheet");
+            	try {
+            		
+                
+            		driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")).click();
+            	
+            		logger.info("Facesheet Clicked");
+            	}catch(Exception e) {
+            		logger.info("Facesheet not found");
+            		excel.setCellData(sheetName, "Rename Status", renameRowNum, "No Files Found");
+            		excel.setCellData(sheetName, "Status", rowNum, "Fail");
+            		throw new SkipException("Facesheet not found");
+            	}
+            	
             	Thread.sleep(5000);
            // 	sel.pauseClick(driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")), 30);
             	
@@ -152,21 +178,55 @@ String CPT2= ", 80307";
             	try {
             		sel.waitFunc(driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")));
     				}catch(Exception e) {
-    					for(int i=0; i<9; i++) {
+    					for(int i=0; i<20; i++) {
     						Thread.sleep(4000);
     					try {
     						driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).isDisplayed();
+    						System.out.println("Download icon found");
     						break;
-    					}catch(Exception e1) {}	
+    					}catch(Exception e1) {
+    						
+    					}	
     				}
     					
     				}
             	
             	
-            	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
-            	logger.info("Clicked on Download button");
+            	URL = driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).getAttribute("href");
+            	System.out.println("URL is "+ URL);
+            	String targetFolderPath = System.getProperty("user.dir")+"\\DownloadedFiles";
+            	 String targetFileName = firstName+lastName+".pdf";
+            	if(URL.contains("https://secure.maxrvu.com")) {
+            		
+            	}else {
+            		URL = "https://secure.maxrvu.com"+URL;
+                	System.out.println(URL);
+            	}
             	
+            	
+
+                 try {
+                	 downloadFile(URL, targetFolderPath, targetFileName);
+                     System.out.println("File downloaded successfully!");
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+            	
+            	
+            	
+            	
+            	
+            	
+       /*     	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
+            	URL = driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).getAttribute("href");
+            	System.out.println(URL);
+            	String fileNum = URL.split("facesheet/")[1].split(".pdf")[0];
+            	System.out.println(fileNum);
+            	logger.info("Clicked on Download button");
+            	waitForTheExcelFileToDownload(fileNum,20);
             	Thread.sleep(3000);
+            	
+            	*/
             	driver.findElement(By.xpath("//a[@id='cboxclose']")).click();
             	logger.info("Clicked on close button");
             	
@@ -175,10 +235,12 @@ String CPT2= ", 80307";
             	driver.findElement(By.xpath("//a[@class='back']")).click();
             	logger.info("Clicked on back arrow");
             	excel.setCellData(sheetName, "Status", rowNum, "Pass");
+            
+            	/*
             	File lastModifiedFile = getLastModified(System.getProperty("user.dir")+"\\DownloadedFiles");
             	if (lastModifiedFile != null) {
                     String newFileName = firstName+lastName+".pdf"; // Provide the new file name
-                    File renamedFile = new File("C:\\Users\\jmartin\\eclipse-workspace\RVU\\DownloadedFiles", newFileName);
+                    File renamedFile = new File("C:\\Users\\jmartin\\eclipse-workspace\\Test Sequence\\DownloadedFiles", newFileName);
 
                     if (lastModifiedFile.renameTo(renamedFile)) {
                         System.out.println("File renamed successfully: " + renamedFile.getName());
@@ -191,7 +253,7 @@ String CPT2= ", 80307";
                     System.out.println("No files found in the directory.");
                     excel.setCellData(sheetName, "Rename Status", renameRowNum, "No Files Found");
                 }
-            	
+            	*/
             	
             
            // }
@@ -210,6 +272,48 @@ String CPT2= ", 80307";
 	
 
 }
+	
+	private static void downloadFile(String fileUrl,String targetFolderPath,  String targetFileName) throws IOException {
+        URL url = new URL(fileUrl);
+        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+
+        // Set up basic authentication if needed
+        // Replace "username" and "password" with your actual credentials
+        String username = "Rbell@medcaremso.com";
+        String password = "EL5Aw8Ge6Q!nbJ";
+        String userCredentials = username + ":" + password;
+        String basicAuth = "Basic " + java.util.Base64.getEncoder().encodeToString(userCredentials.getBytes());
+        httpConn.setRequestProperty("Authorization", basicAuth);
+
+        try (InputStream in = httpConn.getInputStream()) {
+            // Using java.nio.file for simplicity
+            Path targetPath = Path.of(targetFolderPath,targetFileName);
+            Files.createDirectories(targetPath.getParent()); // Ensure that the parent directories exist
+            Files.copy(in, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File saved to: " + targetPath.toAbsolutePath());
+   
+        } finally {
+            httpConn.disconnect();
+        }
+    }
+
+	
+
+	  public static void waitForTheExcelFileToDownload(String fileName, int timeWait)
+              throws IOException, InterruptedException {
+          String downloadPath = System.getProperty("user.dir")+"\\DownloadedFiles";
+          File dir = new File(downloadPath);
+          File[] dirContents = dir.listFiles();
+
+          for (int i = 0; i < 3; i++) {
+              if (dirContents[i].getName().contains(fileName)) {
+                  break;
+              }else {
+                  Thread.sleep(timeWait);
+              }
+          }
+      }
+	
 	public static File getLastModified(String directoryFilePath)
 	{
 		File directory = new File(directoryFilePath);
