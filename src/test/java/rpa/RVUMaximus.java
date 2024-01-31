@@ -98,12 +98,13 @@ String CPT2= ", 80307";
     	driver.findElement(By.xpath("//a[text()='Dashboard']")).click();
     	logger.info("Clicked on dashboard");
     	Thread.sleep(3000);
-    	sel.pauseClick(driver.findElement(By.xpath("//a[@title='Patients']")),20);
-    	driver.findElement(By.xpath("//a[@title='Patients']")).click();
-    	logger.info("Clicked on patients");
+    	//sel.pauseClick(driver.findElement(By.xpath("//a[@title='Patients']")),20);
+    	//driver.findElement(By.xpath("//a[@title='Patients']")).click();
+    	
 
+    	((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//a[@title='Patients']")));
     	
-    	
+    	logger.info("Clicked on patients");
     	
 		
 	}
