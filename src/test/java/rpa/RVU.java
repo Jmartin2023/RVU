@@ -115,7 +115,7 @@ String CPT2= ", 80307";
 			lastName= data.get("LastName");
 			DOB= data.get("DOB");
 			
-			SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yy");
+			SimpleDateFormat parser = new SimpleDateFormat("M/d/yyyy");
 		
 			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		
@@ -124,7 +124,7 @@ String CPT2= ", 80307";
 	    	driver.findElement(By.xpath("//a[text()='patients']")).click();
 	    	
 			dateofbirth=	formatter.format(parser.parse(DOB));
-			
+			 System.out.println("Patient is "+firstName+" "+lastName+" "+dateofbirth);
     		Thread.sleep(3000);
     		sel.pauseClick(driver.findElement(By.id("search")), 10);
     		driver.findElement(By.id("search")).clear();
@@ -133,7 +133,9 @@ String CPT2= ", 80307";
         	Thread.sleep(7000);
     
         	try{   
-         driver.findElement(By.xpath("//li[1]/a[text()='"+lastName+ ", "+ firstName+"']")).click();
+        		//li/a[text()='Olivan, Johnnie']/small[contains(text(),'01/06/1939')]
+         driver.findElement(By.xpath("//li[1]/a[text()='"+lastName+ ", "+ firstName+"']/small[contains(text(),'"+dateofbirth+"')]")).click();
+        
         	}catch(Exception e) {
         		logger.info("Patient not found");
         		
@@ -143,10 +145,10 @@ String CPT2= ", 80307";
         
 
             	Thread.sleep(3000);
-            	sel.pauseClick(driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")), 20);
+            	
             	try {
             		
-                
+            		sel.pauseClick(driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")), 20);
             		driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")).click();
             	
             		logger.info("Facesheet Clicked");
@@ -186,7 +188,16 @@ String CPT2= ", 80307";
             	
             	
 
-           
+            	Thread.sleep(6000);
+           try {
+        	   driver.findElement(By.xpath("//*[contains(text(),'500 Internal Server Error')]")).isDisplayed();
+        	   driver.navigate().back();
+        	   System.out.println("500 Internal Server Error");
+        	   excel.setCellData(sheetName, "Status", rowNum, "Fail");
+        	   throw new SkipException("500 Internal Server Error");
+           }catch(Exception e) {
+        	   
+           }
             	
             	
             	
