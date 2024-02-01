@@ -142,9 +142,24 @@ String CPT2= ", 80307";
 	    	driver.findElement(By.xpath("//span[text()=' Search ']")).click();
 	    	logger.info("Clicked on Search");
 			Thread.sleep(3000);
+			try {
 	    	driver.findElement(By.xpath("//td[contains(@title,'"+lastName+", "+firstName+"')]/parent::tr/td[2]")).click();
 	    	logger.info("Clicked on patient");
-	    	
+			}catch(Exception e) {
+				logger.info("Patient not found");
+				excel.setCellData(sheetName, "Maximus Status", rowNum, "Patient Not Found");
+		    	Thread.sleep(2000);
+		    	driver.findElement(By.id("firstname")).clear();
+		    	
+		    	
+		    	driver.findElement(By.id("lastName")).clear();
+		 
+		    	
+		    	driver.findElement(By.id("dob")).clear();
+		    	
+		    	
+		    	 throw new SkipException("Patient Not Found");
+			}
 	    	driver.findElement(By.xpath("//span[text()='Documents']")).click();
 	    	logger.info("Clicked on Documents");
 	    	
@@ -173,6 +188,39 @@ String CPT2= ", 80307";
 	    //	driver.findElement(By.xpath("//a[@id='fileInput']")).click();
 	    	logger.info("Clicked on choose file");
 	    	Thread.sleep(5000);
+	    	
+	    	
+	    	try {
+        		sel.waitFunc(driver.findElement(By.xpath("//span[contains(text(),'"+filename+".pdf')]")));
+        		System.out.println("File Uploaded");
+				}catch(Exception e) {
+					for(int i=0; i<2; i++) {
+						Thread.sleep(4000);
+					try {
+						driver.findElement(By.xpath("//span[contains(text(),'"+filename+".pdf')]")).isDisplayed();
+						System.out.println("File Uploaded");
+						break;
+					}catch(Exception e1) {
+						
+					}	
+				}
+					
+				}
+	    	
+	    	try {
+	    		driver.findElement(By.xpath("//span[contains(text(),'"+filename+".pdf')]")).isDisplayed();
+	    	}catch(Exception e) {
+	    		logger.info("File could not be uploaded");
+	    		driver.findElement(By.xpath("//button[text()='Cancel']")).click();
+	    		logger.info("Clicked on cancel button");
+	    		excel.setCellData(sheetName, "Maximus Status", rowNum, "Fail");
+		    	Thread.sleep(2000);
+		    	driver.findElement(By.xpath("//a/span/following-sibling::span[text()='Patients']")).click();
+		    	logger.info("Clicked on patients icon");
+		    	 throw new SkipException("File could not be uploaded");
+	    	}
+	    	
+	    	
 	    	driver.findElement(By.xpath("//button[text()='Save']")).click();
 logger.info("Save clicked");
 	    	excel.setCellData(sheetName, "Maximus Status", rowNum, "Pass");
