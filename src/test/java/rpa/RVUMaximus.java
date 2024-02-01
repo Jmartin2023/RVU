@@ -1,5 +1,6 @@
 package rpa;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,14 +12,19 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -184,7 +190,7 @@ String CPT2= ", 80307";
 	    	logger.info("Clicked on Select facesheet");
 	    	Thread.sleep(2000);
 	    	
-	    	driver.findElement(By.xpath("//a[@id='fileInput']/following-sibling::input")).sendKeys(System.getProperty("user.dir") + "\\DownloadedFiles\\image-"+filename+".pdf");
+	    	driver.findElement(By.xpath("//a[@id='fileInput']/following-sibling::input")).sendKeys(System.getProperty("user.dir") + "\\image-"+filename+".pdf");
 	    //	driver.findElement(By.xpath("//a[@id='fileInput']")).click();
 	    	logger.info("Clicked on choose file");
 	    	Thread.sleep(5000);
@@ -229,6 +235,37 @@ logger.info("Save clicked");
 	    	logger.info("Clicked on patients icon");
 	}
 		}
+	
+	
+	@AfterMethod()
+	public void afterMethod(ITestResult result) {
+
+		if(!result.isSuccess()) {
+			// Test Failed
+			String error = result.getThrowable().getLocalizedMessage();
+			logger.info(error);
+			//    		return result.getThrowable().getLocalizedMessage().equals("Insurance mapping not found");
+			//result.getThrowable().printStackTrace();
+
+		
+			
+			try {
+				TakesScreenshot ts = (TakesScreenshot) driver;
+				File ss = ts.getScreenshotAs(OutputType.FILE);
+				String ssPath = "./Screenshots/" + result.getName() + " - " + rowNum + ".png";
+				FileUtils.copyFile(ss, new File(ssPath));
+			} catch (Exception e) {
+				System.out.println("Error taking screenshot");
+			}
+
+		}
+		else {
+			logger.info("Test completed successfully");
+		}
+
+		System.out.println("\n\n\n");
+	}
+	
 		
 		@DataProvider
 		public static Object[][] getData(){
