@@ -184,7 +184,7 @@ String CPT2= ", 80307";
 	    	logger.info("Clicked on Select facesheet");
 	    	Thread.sleep(2000);
 	    	
-	    	driver.findElement(By.xpath("//a[@id='fileInput']/following-sibling::input")).sendKeys(System.getProperty("user.dir") + "\\DownloadedFiles\\image-"+filename+".pdf");
+	    	driver.findElement(By.xpath("//a[@id='fileInput']/following-sibling::input")).sendKeys(System.getProperty("user.dir") + "\\image-"+filename+".pdf");
 	    //	driver.findElement(By.xpath("//a[@id='fileInput']")).click();
 	    	logger.info("Clicked on choose file");
 	    	Thread.sleep(5000);
