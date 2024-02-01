@@ -166,6 +166,7 @@ String CPT2= ", 80307";
 		    	
 		    	 throw new SkipException("Patient Not Found");
 			}
+			Thread.sleep(3000);
 	    	driver.findElement(By.xpath("//span[text()='Documents']")).click();
 	    	logger.info("Clicked on Documents");
 	    	
