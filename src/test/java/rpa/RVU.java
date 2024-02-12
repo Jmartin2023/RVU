@@ -134,12 +134,12 @@ String CPT2= ", 80307";
     
         	try{   
         		//li/a[text()='Olivan, Johnnie']/small[contains(text(),'01/06/1939')]
-         driver.findElement(By.xpath("//li[1]/a[text()='"+lastName+ ", "+ firstName+"']/small[contains(text(),'"+dateofbirth+"')]")).click();
+         driver.findElement(By.xpath("//li/a[text()='"+lastName+ ", "+ firstName+"']/small[contains(text(),'"+dateofbirth+"')]")).click();
         
         	}catch(Exception e) {
         		logger.info("Patient not found");
         		
-        		excel.setCellData(sheetName, "Status", rowNum, "Fail");
+        		excel.setCellData(sheetName, "Status", rowNum, "Patient not found");
         		throw new SkipException("Patient not found");
         	}
         
@@ -155,7 +155,7 @@ String CPT2= ", 80307";
             	}catch(Exception e) {
             		logger.info("Facesheet not found");
             		excel.setCellData(sheetName, "Rename Status", renameRowNum, "No Files Found");
-            		excel.setCellData(sheetName, "Status", rowNum, "Fail");
+            		excel.setCellData(sheetName, "Status", rowNum, "Facesheet not found");
             		throw new SkipException("Facesheet not found");
             	}
             	
