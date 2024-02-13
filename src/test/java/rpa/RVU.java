@@ -139,7 +139,7 @@ String CPT2= ", 80307";
         	}catch(Exception e) {
         		logger.info("Patient not found");
         		
-        		excel.setCellData(sheetName, "Status", rowNum, "Patient not found");
+        		excel.setCellData(sheetName, "Status", rowNum, "Fail");
         		throw new SkipException("Patient not found");
         	}
         
@@ -162,7 +162,16 @@ String CPT2= ", 80307";
             	Thread.sleep(5000);
            // 	sel.pauseClick(driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")), 30);
             	
-            	
+            	try {
+            		sel.waitFunc(driver.findElement(By.xpath("//div[text()='This image failed to load.']")));
+            		driver.findElement(By.xpath("//div[text()='This image failed to load.']")).isDisplayed();
+            		 driver.navigate().back();
+              	   System.out.println("500 Internal Server Error");
+              	   excel.setCellData(sheetName, "Status", rowNum, "500 Internal Server Error");
+              	   throw new SkipException("500 Internal Server Error");
+            	}catch(Exception e) {
+            		
+            	}
             	try {
             		sel.waitFunc(driver.findElement(By.xpath("//img[contains(@src,'facesheet')]")));
     				}catch(Exception e) {
@@ -179,6 +188,16 @@ String CPT2= ", 80307";
     					
     				}
             	
+            	try {
+            		sel.waitFunc(driver.findElement(By.xpath("//div[text()='This image failed to load.']")));
+            		driver.findElement(By.xpath("//div[text()='This image failed to load.']")).isDisplayed();
+            		 driver.navigate().back();
+              	   System.out.println("500 Internal Server Error");
+              	   excel.setCellData(sheetName, "Status", rowNum, "500 Internal Server Error");
+              	   throw new SkipException("500 Internal Server Error");
+            	}catch(Exception e) {
+            		
+            	}
             	
             //	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
             //	System.out.println("URL is "+ URL);
@@ -189,15 +208,7 @@ String CPT2= ", 80307";
             	
 
             	Thread.sleep(6000);
-           try {
-        	   driver.findElement(By.xpath("//*[contains(text(),'500 Internal Server Error')]")).isDisplayed();
-        	   driver.navigate().back();
-        	   System.out.println("500 Internal Server Error");
-        	   excel.setCellData(sheetName, "Status", rowNum, "Fail");
-        	   throw new SkipException("500 Internal Server Error");
-           }catch(Exception e) {
-        	   
-           }
+          
             	
             	
             	
@@ -205,6 +216,16 @@ String CPT2= ", 80307";
             	
             	
             	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
+            	Thread.sleep(4000);
+            	 try {
+              	   driver.findElement(By.xpath("//*[contains(text(),'500 Internal Server Error')]")).isDisplayed();
+              	   driver.navigate().back();
+              	   System.out.println("500 Internal Server Error");
+              	   excel.setCellData(sheetName, "Status", rowNum, "Fail");
+              	   throw new SkipException("500 Internal Server Error");
+                 }catch(Exception e) {
+              	   
+                 }
             	URL = driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).getAttribute("href");
             	System.out.println(URL);
             	String fileNum = URL.split("facesheet/")[1].split(".pdf")[0];
