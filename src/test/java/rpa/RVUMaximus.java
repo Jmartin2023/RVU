@@ -122,8 +122,8 @@ String CPT2= ", 80307";
 		filename=data.get("File Name");
 		maximusStatus=data.get("Maximus Status");
 		if(status.equals("Pass") && (maximusStatus.isBlank()||maximusStatus.isEmpty()) && !filename.isBlank()) {	
-			firstName= data.get("FirstName");
-			lastName= data.get("LastName");
+			firstName= data.get("FirstName").trim();
+			lastName= data.get("LastName").trim();
 			DOB= data.get("DOB");
 			
 			SimpleDateFormat parser = new SimpleDateFormat("M/d/yyyy");
@@ -140,12 +140,19 @@ String CPT2= ", 80307";
 		}catch(Exception e) {
 			
 		}
+		
 			driver.findElement(By.id("firstname")).sendKeys(firstName);
 	    	logger.info("First name enetered as ");
 	    	
+	    	if(lastName.contains(" ")) {
+	    		driver.findElement(By.id("lastName")).sendKeys(lastName.split(" ")[0]);
+	    	//	driver.findElement(By.id("lastName")).sendKeys(" ");
+	    	//	driver.findElement(By.id("lastName")).sendKeys(lastName.split(" ")[1]);
+		    	logger.info("Last name enetered as ");
+	    	}else {
 	    	driver.findElement(By.id("lastName")).sendKeys(lastName);
 	    	logger.info("Last name enetered as ");
-	    	
+	    	}
 	    	driver.findElement(By.id("dob")).sendKeys(dateofbirth);
 	    	logger.info("Date of birth entered as "+dateofbirth);
 	    	
