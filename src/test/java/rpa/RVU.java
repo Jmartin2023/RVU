@@ -108,7 +108,7 @@ String CPT2= ", 80307";
 		rowNum++;
 		renameRowNum++;
 		status= data.get("Status");
-		
+		boolean downloadSuccess=false;	
 
 		if(status.isBlank()|| status.isEmpty()) {
 			firstName= data.get("FirstName");
@@ -184,6 +184,8 @@ String CPT2= ", 80307";
     					try {
     						driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).isDisplayed();
     						System.out.println("Download icon found");
+						driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
+    						downloadSuccess=true;
     						break;
     					}catch(Exception e1) {
     						
@@ -191,6 +193,13 @@ String CPT2= ", 80307";
     				}
     					
     				}
+
+			if(downloadSuccess==false) {
+            		driver.navigate().back();
+            		  excel.setCellData(sheetName, "Status", rowNum, "Fail");
+                 	   throw new SkipException("File needs to be renamed to download");
+            	}
+            	
             	
             	try {
             		sel.waitFunc(driver.findElement(By.xpath("//div[text()='This image failed to load.']")));
@@ -219,7 +228,7 @@ String CPT2= ", 80307";
             	
             	
             	
-            	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
+        //    	driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).click();
             	Thread.sleep(4000);
             	 try {
               	   driver.findElement(By.xpath("//*[contains(text(),'500 Internal Server Error')]")).isDisplayed();
