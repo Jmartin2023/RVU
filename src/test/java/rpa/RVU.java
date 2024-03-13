@@ -177,6 +177,10 @@ String CPT2= ", 80307";
     				}catch(Exception e) {
     					for(int i=0; i<20; i++) {
     						Thread.sleep(4000);
+						try {
+    							driver.findElements(By.xpath("//a[@id='cboxNextBtn']/i[@class='fa a fa-chevron-right fa-2x']")).get(0).click();
+        						
+    						}catch(Exception e2) {}
     					try {
     						driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).isDisplayed();
     						System.out.println("Download icon found");
@@ -245,9 +249,16 @@ String CPT2= ", 80307";
             	logger.info("Clicked on close button");
             	
             	Thread.sleep(3000);
-            	sel.pauseClick(driver.findElement(By.xpath("//a[@class='back']")), 20);
-            	driver.findElement(By.xpath("//a[@class='back']")).click();
-            	logger.info("Clicked on back arrow");
+            	try {
+            	driver.findElement(By.xpath("//a[@id='cboxclose']")).click();
+            	logger.info("Clicked on close button");
+            	}catch(Exception e) {
+            		driver.navigate().back();
+            	}
+            	Thread.sleep(3000);
+//            	sel.pauseClick(driver.findElement(By.xpath("//a[@class='back']")), 20);
+//            	driver.findElement(By.xpath("//a[@class='back']")).click();
+//            	logger.info("Clicked on back arrow");
             	excel.setCellData(sheetName, "Status", rowNum, "Pass");
             
             	
