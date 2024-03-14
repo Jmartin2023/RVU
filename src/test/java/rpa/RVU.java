@@ -254,8 +254,8 @@ String CPT2= ", 80307";
             	Thread.sleep(3000);
             	
             	
-            	driver.findElement(By.xpath("//a[@id='cboxclose']")).click();
-            	logger.info("Clicked on close button");
+     //       	driver.findElement(By.xpath("//a[@id='cboxclose']")).click();
+      //      	logger.info("Clicked on close button");
             	
             	Thread.sleep(3000);
             	try {
