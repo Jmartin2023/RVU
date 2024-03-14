@@ -24,6 +24,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -261,34 +262,6 @@ logger.info("Save clicked");
 		}
 	
 	
-	@AfterMethod()
-	public void afterMethod(ITestResult result) {
-
-		if(!result.isSuccess()) {
-			// Test Failed
-			String error = result.getThrowable().getLocalizedMessage();
-			logger.info(error);
-			//    		return result.getThrowable().getLocalizedMessage().equals("Insurance mapping not found");
-			//result.getThrowable().printStackTrace();
-
-		
-			
-			try {
-				TakesScreenshot ts = (TakesScreenshot) driver;
-				File ss = ts.getScreenshotAs(OutputType.FILE);
-				String ssPath = "./Screenshots/" + result.getName() + " - " + rowNum + ".png";
-				FileUtils.copyFile(ss, new File(ssPath));
-			} catch (Exception e) {
-				System.out.println("Error taking screenshot");
-			}
-
-		}
-		else {
-			logger.info("Test completed successfully");
-		}
-
-		System.out.println("\n\n\n");
-	}
 	
 			@AfterMethod()
 	public void afterMethod(ITestResult result) throws IOException {
