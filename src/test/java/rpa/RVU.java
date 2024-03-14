@@ -177,10 +177,7 @@ String CPT2= ", 80307";
     				}catch(Exception e) {
     					for(int i=0; i<20; i++) {
     						Thread.sleep(4000);
-						try {
-    							driver.findElements(By.xpath("//a[@id='cboxNextBtn']/i[@class='fa a fa-chevron-right fa-2x']")).get(0).click();
-        						
-    						}catch(Exception e2) {}
+						
     					try {
     						driver.findElement(By.xpath("//a[contains(@href,'facesheet') and @title = 'Download as PDF']")).isDisplayed();
     						System.out.println("Download icon found");
@@ -188,7 +185,10 @@ String CPT2= ", 80307";
     						downloadSuccess=true;
     						break;
     					}catch(Exception e1) {
-    						
+    						try {
+    							driver.findElements(By.xpath("//a[@id='cboxNextBtn']/i[@class='fa a fa-chevron-right fa-2x']")).get(0).click();
+        						
+    						}catch(Exception e2) {}
     					}	
     				}
     					
