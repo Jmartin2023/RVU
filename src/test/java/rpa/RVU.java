@@ -289,7 +289,39 @@ String CPT2= ", 80307";
     	
 	
 
+	@AfterMethod()
+	public void afterMethod(ITestResult result) throws IOException {
 
+		if(!result.isSuccess()) {
+			// Test Failed
+			String error = result.getThrowable().getLocalizedMessage();
+			logger.info(error);
+			//result.getThrowable().printStackTrace();
+			try {
+				TakesScreenshot ts = (TakesScreenshot) driver;
+				File ss = ts.getScreenshotAs(OutputType.FILE);
+				String ssPath = "./Screenshots/" + result.getName() + " - " + rowNum + ".png";
+				FileUtils.copyFile(ss, new File(ssPath));
+			} catch (Exception e) {
+				System.out.println("Error taking screenshot");
+			}
+
+		}
+		else {
+			logger.info("Test completed successfully");
+		}
+
+		System.out.println("\n\n\n");
+	}
+
+	@AfterClass()
+	public void afterClass() throws IOException {
+		if(excelFile!=null) excelFile.closeWorkbook();
+		if(driver!=null) {
+		//	driver.quit();
+			logger.info("Quit driver");
+		}
+	}
 	
 	private static void downloadFile(String fileUrl,String targetFolderPath,  String targetFileName) throws IOException {
         URL url = new URL(fileUrl);
