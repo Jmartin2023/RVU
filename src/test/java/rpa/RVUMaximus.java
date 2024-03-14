@@ -190,7 +190,7 @@ String CPT2= ", 80307";
 					}
 				}
 				
-			
+		Thread.sleep(2000);	
 	    	driver.findElement(By.xpath("//span[text()='Documents']")).click();
 	    	logger.info("Clicked on Documents");
 	    	Thread.sleep(2000);
